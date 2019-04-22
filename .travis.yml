@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t budia/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run budia/react-test npm run test -- --coverage
+
+after_success:
+  - docker build -t budia/multi-client ./client
+  - docker build -t budia/multi-nginx ./nginx
+  - docker build -t budia/multi-server ./server
+  - docker build -t budia/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push budia/multi-client
+  - docker push budia/multi-nginx
+  - docker push budia/multi-server
+  - docker push budia/multi-worker
+
