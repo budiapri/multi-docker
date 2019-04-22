@@ -6,7 +6,7 @@ before_install:
   - docker build -t budia/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run budia/react-test npm run test -- --coverage
+  - docker run budia/react-test npm test -- --coverage
 
 after_success:
   - docker build -t budia/multi-client ./client
